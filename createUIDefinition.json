@@ -86,7 +86,7 @@
                             "sku": "fortinet_fg-vm"
                         },
                         "count": "1",
-                        "visible": "[not(equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS'))]"
+                        "visible": "[equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS2')]"
                     }
                 ]
             }
