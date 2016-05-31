@@ -59,7 +59,7 @@
                             "sku": "fortinet_fg-vm"
                         },
                         "count": "1",
-                        "visible": "[equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS')]"
+                        "visible": "[equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS') | not(equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS'))]"
                     },
                     {
                         "name": "standardVmSize",
