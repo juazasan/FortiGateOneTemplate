@@ -1,0 +1,101 @@
+{
+    "handler": "Microsoft.Compute.MultiVm",
+    "version": "0.0.1-preview",
+    "parameters": {
+        "basics": [],
+        "steps": [
+            {
+                "name": "VMandStorageConfiguration",
+                "label": "Storage and VM Size Selection",
+                "subLabel": {
+                    "preValidation": "Select storage and VM",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Storage and VM Selection",
+                "elements": [
+                    {
+                        "name": "storageElement",
+                        "type": "Microsoft.Storage.StorageAccountSelector",
+                        "label": "Storage account",
+                        "toolTip": "Choose a premium storage account for premium VM selections.",
+                        "defaultValue": {
+                            "type": "Premium_LRS"
+                        },
+                        "constraints": {
+                            "allowedTypes": [
+                                "Standard_LRS",
+                                "Standard_GRS",
+                                "Premium_LRS"
+                            ],
+                            "required": true
+                        },
+                        "options": {
+                            "hideExisting": false
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "premiumVmSize",
+                        "type": "Microsoft.Compute.SizeSelector",
+                        "label": "Virtual machine size",
+                        "toolTip": "The size of virtual machine to provision.",
+                        "recommendedSizes": [
+                            "Standard_DS2_v2",
+                            "Standard_DS3_v2",
+                            "Standard_DS4_v2"
+                        ],
+                        "constraints": {
+                            "allowedSizes": [
+                                "Standard_DS2_v2",
+                                "Standard_DS3_v2",
+                                "Standard_DS4_v2"
+                            ],
+                            "required": true
+                        },
+                        "osPlatform": "Linux",
+                        "imageReference": {
+                            "publisher": "Fortinet",
+                            "offer": "fortinet_fortigate-vm_v5",
+                            "sku": "fortinet_fg-vm"
+                        },
+                        "count": "1",
+                        "visible": "[equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS')]"
+                    },
+                    {
+                        "name": "standardVmSize",
+                        "type": "Microsoft.Compute.SizeSelector",
+                        "label": "Virtual machine size",
+                        "toolTip": "The size of virtual machine to provision.",
+                        "recommendedSizes": [
+                            "Standard_D2_v2",
+                            "Standard_D3_v2",
+                            "Standard_D4_v2"
+                        ],
+                        "constraints": {
+                            "allowedSizes": [
+                                "Standard_D2_v2",
+                                "Standard_D3_v2",
+                                "Standard_D4_v2"
+                            ],
+                            "required": true
+                        },
+                        "osPlatform": "Linux",
+                        "imageReference": {
+                            "publisher": "Fortinet",
+                            "offer": "fortinet_fortigate-vm_v5",
+                            "sku": "fortinet_fg-vm"
+                        },
+                        "count": "1",
+                        "visible": "[not(equals(steps('VMandStorageConfiguration').storageElement.type, 'Premium_LRS'))]"
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "storageAccountName": "[steps('VMandStorageConfiguration').storageElement.name]",
+            "storageAccountType": "[steps('VMandStorageConfiguration').storageElement.type]",
+            "premiumVmSize": "[steps('VMandStorageConfiguration').premiumVmSize.name]",
+            "standardVmSize": "[steps('VMandStorageConfiguration').standardVmSize.name]"
+        }
+    }
+}
