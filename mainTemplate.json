@@ -148,14 +148,17 @@
   "variables": {
     "vmStorageAccountContainerName": "vhds",
 
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetResourceName'))]",
-    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', variables('OutsideSubnetName'))]",
-    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', variables('DMZSubnetName'))]",
-    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/', variables('InternalSubnetName'))]",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetResourceName'))]",
+    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('Subnet1Name'))]",
+    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', parameters('Subnet2Name'))]",
+    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/', parameters('Subnet3Name'))]",
 
     "routeTable1Name": "[concat(parameters('vmName'),'PublicFacingSubnetRoutes')]",
     "routeTable2Name": "[concat(parameters('vmName'),'DMZSubnetRoutes')]",
     "routeTable3Name": "[concat(parameters('vmName'),'InternalSubnetRoutes')]",
+    "routeTable1Id": "[resourceId('Microsoft.Network/routeTables',variables('routeTable1Name'))]",
+    "routeTable2Id": "[resourceId('Microsoft.Network/routeTables',variables('routeTable2Name'))]",
+    "routeTable3Id": "[resourceId('Microsoft.Network/routeTables',variables('routeTable3Name'))]",
 
     "apiVer": "2015-06-15",
 
@@ -168,7 +171,7 @@
 
     "publicIPID": "[resourceID('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressResourceName'))]",
 
-    "storage_Acct_1_Id": "[resourceId('Microsoft.Storage/storageAccounts',parameters('StorageAccountName'))]",
+    "storage_Acct_1_Id": "[resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName'))]",
 
     "compute_AvailabilitySet_FG_Name": "[concat(parameters('vmName'),'AvailSet')]",
     "compute_AvailabilitySet_FG_Id": "[resourceId('Microsoft.Compute/availabilitySets', variables('compute_AvailabilitySet_FG_Name'))]"
@@ -183,7 +186,7 @@
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(parameters('StorageAccountName'))]",
+      "name": "[concat(parameters('storageAccountName'))]",
       "apiVersion": "2015-06-15",
       "location": "[parameters('location')]",
       "properties": {
@@ -341,7 +344,7 @@
     {
       "apiVersion": "[variables('apiVer')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[parameters('network_NIC_fg11_Name')]",
+      "name": "[variables('network_NIC_fg11_Name')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[variables('publicIPID')]",
@@ -429,7 +432,7 @@
         "[concat('Microsoft.Network/networkInterfaces/',variables('network_NIC_fg11_Name'))]",
         "[concat('Microsoft.Network/networkInterfaces/',variables('network_NIC_fg12_Name'))]",
         "[concat('Microsoft.Network/networkInterfaces/',variables('network_NIC_fg13_Name'))]",
-        "[concat('Microsoft.Storage/','parameters('StorageAccountName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/',parameters('storageAccountName'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -446,7 +449,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat('http://', parameters('StorageAccountName'), '.blob.core.windows.net')]"
+            "storageUri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net')]"
           }
         },
         "storageProfile": {
@@ -461,7 +464,7 @@
             "caching": "ReadWrite",
             "createOption": "FromImage",
             "vhd": {
-              "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/', parameters('vmName'), '-osdisk', '.vhd')]"
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/', parameters('vmName'), '-osdisk', '.vhd')]"
             }
           },
           "dataDisks": [
@@ -470,7 +473,7 @@
               "diskSizeGB": "30",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/', parameters('vmName'), '-datadisk', '.vhd')]"
+                "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/', parameters('vmName'), '-datadisk', '.vhd')]"
               },
               "createOption": "Empty"
             }
